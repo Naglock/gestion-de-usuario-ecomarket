@@ -33,7 +33,7 @@ public class UsuarioController {
 
     @PostMapping
     public Usuario crear(@RequestBody Usuario usuario){
-        return servicio.guardad(usuario);
+        return servicio.guardar(usuario);
     }
     
     @PutMapping("/{id}")
@@ -42,7 +42,7 @@ public class UsuarioController {
         if (existente != null){
             existente.setUsername(nuevoUsuario.getUsername());
             existente.setPassword(nuevoUsuario.getPassword());
-            servicio.guardad(existente);
+            servicio.guardar(existente);
             return ResponseEntity.ok(existente);
         } else {
             return ResponseEntity.notFound().build();

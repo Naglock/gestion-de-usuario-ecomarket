@@ -1,6 +1,7 @@
 package cl.ecomarket.usermanagement.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ public class PermisoService {
         permisoDao.deleteById(id);
     }
 
-    public Permiso obtenerPorNombre(String nombre) {
+    public Optional<Permiso> obtenerPorNombre(String nombre) {
         return permisoDao.findByNombre(nombre);
     }
 

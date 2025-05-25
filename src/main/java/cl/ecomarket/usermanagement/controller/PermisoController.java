@@ -59,13 +59,15 @@ public class PermisoController {
 
     @PostMapping("/init")
     public void initPermisos() {
-        String[] nombres = {"ROL_CLIENTE", "ROL_VENDEDOR", "ROL_ADMIN"};
+        String[] nombres = {"ROLE_CLIENTE", "ROLE_VENDEDOR", "ROLE_ADMIN"};
         for (String nombre : nombres) {
             if (permisoService.obtenerPorNombre(nombre) == null) {
                 Permiso p = new Permiso();
                 p.setNombre(nombre);
                 permisoService.guardarPermiso(p);
+                System.out.println("Verificando permiso: "+nombre);
             }
+        
         }
     }
 
