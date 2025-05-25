@@ -155,10 +155,5 @@ public class UsuarioController {
     }
 
 
-    @GetMapping("/whoami")
-    public String whoami(Authentication authentication) {
-        return "Usuario: " + authentication.getName() + ", Roles: " + authentication.getAuthorities();
-    }
-
 
 }
