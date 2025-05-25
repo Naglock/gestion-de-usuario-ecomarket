@@ -18,7 +18,7 @@ public class DataInitializer {
     @Bean
     CommandLineRunner initData(UsuarioRepository usuarioRepository, PermisoRepository permisoRepository, PasswordEncoder passwordEncoder) {
         return args -> {
-            // 💡 Aseguramos la existencia del permiso ROLE_ADMIN
+            
             Permiso adminPermiso;
             Optional<Permiso> optionalAdmin = permisoRepository.findByNombre("ROLE_ADMIN");
             if (optionalAdmin.isPresent()) {
@@ -27,7 +27,7 @@ public class DataInitializer {
                 adminPermiso = permisoRepository.save(new Permiso(null, "ROLE_ADMIN"));
             }
 
-            // 💡 Aseguramos la existencia del permiso ROLE_VENDEDOR
+            
             Permiso vendedorPermiso;
             Optional<Permiso> optionalVendedor = permisoRepository.findByNombre("ROLE_VENDEDOR");
             if (optionalVendedor.isPresent()) {
@@ -36,12 +36,20 @@ public class DataInitializer {
                 vendedorPermiso = permisoRepository.save(new Permiso(null, "ROLE_VENDEDOR"));
             }
 
-            // 💡 Creamos el usuario admin solo si no existe
+            Permiso clientePermiso;
+            Optional<Permiso> optionalCliente = permisoRepository.findByNombre("ROLE_CLIENTE");
+            if (optionalCliente.isPresent()) {
+                clientePermiso = optionalCliente.get();
+            } else {
+                clientePermiso = permisoRepository.save(new Permiso(null, "ROLE_CLIENTE"));
+            }
+
+            
             if (usuarioRepository.findByUsername("admin").isEmpty()) {
                 Usuario admin = new Usuario();
-                admin.setUsername("admin"); // asegúrate que en tu entidad se llame "nombre"
-                admin.setPassword(passwordEncoder.encode("admin123")); // encriptar contraseña
-                admin.setPermisos(Set.of(adminPermiso, vendedorPermiso)); // puedes asignar uno o varios permisos
+                admin.setUsername("admin"); 
+                admin.setPassword(passwordEncoder.encode("admin123")); 
+                admin.setPermisos(Set.of(adminPermiso)); 
                 usuarioRepository.save(admin);
             }
         };
