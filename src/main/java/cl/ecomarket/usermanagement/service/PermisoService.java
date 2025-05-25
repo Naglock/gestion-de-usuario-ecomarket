@@ -5,33 +5,32 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import cl.ecomarket.usermanagement.dao.PermisoDao;
 import cl.ecomarket.usermanagement.model.Permiso;
+import cl.ecomarket.usermanagement.repository.PermisoRepository;
 
 @Service
 public class PermisoService {
     @Autowired
-    private PermisoDao permisoDao;
+    private PermisoRepository permisoRepository;
 
     public List<Permiso> listarTodos() {
-        return permisoDao.findAll();
+        return permisoRepository.findAll();
     }
 
     public Permiso obtenerPorId(Long id) {
-        return permisoDao.findById(id).orElse(null);
+        return permisoRepository.findById(id).orElse(null);
     }
 
     public Permiso guardarPermiso(Permiso permiso) {
-        return permisoDao.save(permiso);
+        return permisoRepository.save(permiso);
     }
 
     public void eliminar(Long id) {
-        permisoDao.deleteById(id);
+        permisoRepository.deleteById(id);
     }
 
     public Optional<Permiso> obtenerPorNombre(String nombre) {
-        return permisoDao.findByNombre(nombre);
+        return permisoRepository.findByNombre(nombre);
     }
 
 

@@ -5,37 +5,47 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import cl.ecomarket.usermanagement.dao.UsuarioDao;
 import cl.ecomarket.usermanagement.model.Usuario;
+import cl.ecomarket.usermanagement.repository.UsuarioRepository;
 
 @Service
 public class UsuarioService {
 
     @Autowired
-    private UsuarioDao usuarioDao;
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     public List<Usuario> listarTodos() {
-        return usuarioDao.findAll();
+        return usuarioRepository.findAll();
     }
 
     public Usuario obtenerPorId(Long id) {
-        return usuarioDao.findById(id).orElse(null);
+        return usuarioRepository.findById(id).orElse(null);
     }
 
     public Usuario guardar(Usuario usuario) {
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        return usuarioDao.save(usuario);
+        return usuarioRepository.save(usuario);
     }
 
     public void eliminar(Long id) {
-        usuarioDao.deleteById(id);
+        usuarioRepository.deleteById(id);
     }
 
     public Usuario obtenerPorNombreUsuario(String username) {
-        return usuarioDao.findByUsername(username).orElse(null);
+        return usuarioRepository.findByUsername(username).orElse(null);
     }
+
+    public Usuario actualizarUsuario(Usuario usuarioActualizado) {
+        Usuario usuarioExistente = usuarioRepository.findById(usuarioActualizado.getId())
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        usuarioExistente.setUsername(usuarioActualizado.getUsername());
+        usuarioExistente.setEmail(usuarioActualizado.getEmail());
+        usuarioExistente.setPermisos(usuarioActualizado.getPermisos());
+        return usuarioRepository.save(usuarioExistente);
+    }
+
 }

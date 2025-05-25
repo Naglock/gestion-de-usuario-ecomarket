@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import cl.ecomarket.usermanagement.model.Permiso;
 import cl.ecomarket.usermanagement.service.PermisoService;
@@ -58,14 +59,14 @@ public class PermisoController {
     }
 
     @PostMapping("/init")
+    @PreAuthorize("hasRole('ADMIN')")
     public void initPermisos() {
         String[] nombres = {"ROLE_CLIENTE", "ROLE_VENDEDOR", "ROLE_ADMIN"};
         for (String nombre : nombres) {
-            if (permisoService.obtenerPorNombre(nombre) == null) {
+            if (permisoService.obtenerPorNombre(nombre).isEmpty()) {
                 Permiso p = new Permiso();
                 p.setNombre(nombre);
                 permisoService.guardarPermiso(p);
-                System.out.println("Verificando permiso: "+nombre);
             }
         
         }
