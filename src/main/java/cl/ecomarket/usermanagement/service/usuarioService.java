@@ -48,4 +48,11 @@ public class UsuarioService {
         return usuarioRepository.save(usuarioExistente);
     }
 
+    public List<Usuario> listarPorRol(String nombreRol) {
+        return usuarioRepository.findAll().stream()
+            .filter(u -> u.getPermisos().stream()
+                .anyMatch(p -> p.getNombre().equals(nombreRol)))
+            .toList();
+    }
+
 }

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import cl.ecomarket.usermanagement.model.Permiso;
 import cl.ecomarket.usermanagement.service.PermisoService;
@@ -35,7 +34,7 @@ public class PermisoController {
     public Permiso crear(@RequestBody Permiso permiso){
         return permisoService.guardarPermiso(permiso);
     }
-
+    
     @PutMapping("/{id}")
     public ResponseEntity<Permiso> actualizar(@PathVariable Long id, @RequestBody Permiso nuevoPermiso) {
         Permiso existente = permisoService.obtenerPorId(id);
@@ -59,7 +58,6 @@ public class PermisoController {
     }
 
     @PostMapping("/init")
-    @PreAuthorize("hasRole('ADMIN')")
     public void initPermisos() {
         String[] nombres = {"ROLE_CLIENTE", "ROLE_VENDEDOR", "ROLE_ADMIN"};
         for (String nombre : nombres) {
