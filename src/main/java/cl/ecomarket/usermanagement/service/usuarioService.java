@@ -1,38 +1,35 @@
 package cl.ecomarket.usermanagement.service;
 
-import cl.ecomarket.model.usuario;
-import cl.ecomarket.repository.UserRepository;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import cl.ecomarket.usermanagement.dao.UsuarioDao;
+import cl.ecomarket.usermanagement.model.Usuario;
 
 @Service
-public class usuarioService {
-    @Autowire
-    private UserRepository userRepository;
+public class UsuarioService {
+    @Autowired
+    private UsuarioDao usuarioDao;
 
-    public List<usuario> listarUsuarios() {
-        return userRepository.findAll();
-
+    public List<Usuario> listarTodos() {
+        return usuarioDao.findAll();
     }
 
-    public Optional<usuario> obtenerUsuarioPorId(Long id){
-        return userRepository.findById(id);
+    public Usuario obtenerPorId(Long id) {
+        return usuarioDao.findById(id).orElse(null);
     }
 
-    public usuario guardarUsuario(usuario usuario) {
-        return userRepository.save(usuario);
+    public Usuario guardad(Usuario usuario) {
+        return usuarioDao.save(usuario);
     }
 
-    public usuario actualizarUsuario(usuario usuario) {
-        return userRepository.save(usuario);
+    public void eliminar(Long id) {
+        usuarioDao.deleteById(id);
     }
 
-    public void eliminarUsuario(Long id){
-        userRepository.deleteById(id);
-    }
+    
 
 
 

@@ -2,11 +2,9 @@ package cl.ecomarket.usermanagement.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import cl.ecomarket.usermanagement.model.Permiso;
+import cl.ecomarket.usermanagement.model.Usuario;
 
 @Repository
-public interface PermisoRepository extends JpaRepository<Permiso, Long> {
-    Permiso findByNombre(String nombre);
+public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
 }
