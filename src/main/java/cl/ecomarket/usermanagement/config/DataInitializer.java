@@ -52,6 +52,20 @@ public class DataInitializer {
                 admin.setPermisos(Set.of(adminPermiso)); 
                 usuarioRepository.save(admin);
             }
+            if (usuarioRepository.findByUsername("vendedor").isEmpty()) {
+                Usuario vendedor = new Usuario();
+                vendedor.setUsername("vendedor"); 
+                vendedor.setPassword(passwordEncoder.encode("vendedor123")); 
+                vendedor.setPermisos(Set.of(vendedorPermiso)); 
+                usuarioRepository.save(vendedor);
+            }
+            if (usuarioRepository.findByUsername("cliente").isEmpty()) {
+                Usuario cliente = new Usuario();
+                cliente.setUsername("cliente"); 
+                cliente.setPassword(passwordEncoder.encode("cliente123")); 
+                cliente.setPermisos(Set.of(clientePermiso)); 
+                usuarioRepository.save(cliente);
+            }
         };
     }
 }
