@@ -9,7 +9,7 @@ import cl.ecomarket.usermanagement.model.Permiso;
 import cl.ecomarket.usermanagement.service.PermisoService;
 
 @RestController
-@RequestMapping("api/permisos")
+@RequestMapping("/api/permisos")
 public class PermisoController {
     
     @Autowired
@@ -54,19 +54,6 @@ public class PermisoController {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();
-        }
-    }
-
-    @PostMapping("/init")
-    public void initPermisos() {
-        String[] nombres = {"ROLE_CLIENTE", "ROLE_VENDEDOR", "ROLE_ADMIN"};
-        for (String nombre : nombres) {
-            if (permisoService.obtenerPorNombre(nombre).isEmpty()) {
-                Permiso p = new Permiso();
-                p.setNombre(nombre);
-                permisoService.guardarPermiso(p);
-            }
-        
         }
     }
 

@@ -19,53 +19,29 @@ public class DataInitializer {
     CommandLineRunner initData(UsuarioRepository usuarioRepository, PermisoRepository permisoRepository, PasswordEncoder passwordEncoder) {
         return args -> {
             
-            Permiso adminPermiso;
-            Optional<Permiso> optionalAdmin = permisoRepository.findByNombre("ROLE_ADMIN");
-            if (optionalAdmin.isPresent()) {
-                adminPermiso = optionalAdmin.get();
-            } else {
-                adminPermiso = permisoRepository.save(new Permiso(null, "ROLE_ADMIN"));
-            }
+            Permiso adminPermiso = permisoRepository.findByNombre("ROLE_ADMINISTRADOR_SISTEMA")
+                .orElseGet(() -> permisoRepository.save(new Permiso(null, "ROLE_ADMINISTRADOR_SISTEMA")));
 
+            Permiso vendedorPermiso = permisoRepository.findByNombre("ROLE_EMPLEADO_VENTAS")
+                .orElseGet(() -> permisoRepository.save(new Permiso(null, "ROLE_EMPLEADO_VENTAS")));
+
+            Permiso clientePermiso = permisoRepository.findByNombre("ROLE_CLIENTE")
+                .orElseGet(() -> permisoRepository.save(new Permiso(null, "ROLE_CLIENTE")));
             
-            Permiso vendedorPermiso;
-            Optional<Permiso> optionalVendedor = permisoRepository.findByNombre("ROLE_VENDEDOR");
-            if (optionalVendedor.isPresent()) {
-                vendedorPermiso = optionalVendedor.get();
-            } else {
-                vendedorPermiso = permisoRepository.save(new Permiso(null, "ROLE_VENDEDOR"));
-            }
+            Permiso gerentePermiso = permisoRepository.findByNombre("ROLE_GERENTE_TIENDA")
+                .orElseGet(() -> permisoRepository.save(new Permiso(null, "ROLE_GERENTE_TIENDA")));
 
-            Permiso clientePermiso;
-            Optional<Permiso> optionalCliente = permisoRepository.findByNombre("ROLE_CLIENTE");
-            if (optionalCliente.isPresent()) {
-                clientePermiso = optionalCliente.get();
-            } else {
-                clientePermiso = permisoRepository.save(new Permiso(null, "ROLE_CLIENTE"));
-            }
-
+            Permiso logisticaPermiso = permisoRepository.findByNombre("ROLE_LOGISTICA")
+                .orElseGet(() -> permisoRepository.save(new Permiso(null, "ROLE_LOGISTICA")));
             
-            if (usuarioRepository.findByUsername("admin").isEmpty()) {
+            if (usuarioRepository.findByUsername("Administrador").isEmpty()) {
                 Usuario admin = new Usuario();
-                admin.setUsername("admin"); 
-                admin.setPassword(passwordEncoder.encode("admin123")); 
-                admin.setPermisos(Set.of(adminPermiso)); 
+                admin.setUsername("Administrador");
+                admin.setPassword(passwordEncoder.encode("admin123"));
+                admin.setPermisos(Set.of(adminPermiso));
                 usuarioRepository.save(admin);
             }
-            if (usuarioRepository.findByUsername("vendedor").isEmpty()) {
-                Usuario vendedor = new Usuario();
-                vendedor.setUsername("vendedor"); 
-                vendedor.setPassword(passwordEncoder.encode("vendedor123")); 
-                vendedor.setPermisos(Set.of(vendedorPermiso)); 
-                usuarioRepository.save(vendedor);
-            }
-            if (usuarioRepository.findByUsername("cliente").isEmpty()) {
-                Usuario cliente = new Usuario();
-                cliente.setUsername("cliente"); 
-                cliente.setPassword(passwordEncoder.encode("cliente123")); 
-                cliente.setPermisos(Set.of(clientePermiso)); 
-                usuarioRepository.save(cliente);
-            }
+
         };
     }
 }
