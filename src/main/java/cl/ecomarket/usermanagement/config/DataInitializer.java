@@ -1,8 +1,6 @@
 package cl.ecomarket.usermanagement.config;
 
-import java.util.Optional;
 import java.util.Set;
-
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

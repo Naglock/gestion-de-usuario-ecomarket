@@ -5,10 +5,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import cl.ecomarket.usermanagement.model.Usuario;
 import cl.ecomarket.usermanagement.repository.UsuarioRepository;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class UsuarioService {
 
     @Autowired
@@ -53,6 +56,9 @@ public class UsuarioService {
             .filter(u -> u.getPermisos().stream()
                 .anyMatch(p -> p.getNombre().equals(nombreRol)))
             .toList();
+    }
+    public boolean existeUsuario(String username) {
+        return usuarioRepository.existsByUsername(username);
     }
 
 }

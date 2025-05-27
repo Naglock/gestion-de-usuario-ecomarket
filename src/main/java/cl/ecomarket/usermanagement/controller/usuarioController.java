@@ -11,13 +11,15 @@ import cl.ecomarket.usermanagement.model.Permiso;
 import cl.ecomarket.usermanagement.model.Usuario;
 import cl.ecomarket.usermanagement.service.PermisoService;
 import cl.ecomarket.usermanagement.service.UsuarioService;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping("/api/v1/usuarios")
+@RequiredArgsConstructor
 public class UsuarioController {
 
     @Autowired
@@ -34,8 +36,8 @@ public class UsuarioController {
     
     @GetMapping
     public List<Usuario> listar(Authentication authentication) {
-        boolean isAdmin = tieneRol(authentication, "ROLE_ADMIN");
-        boolean isVendedor = tieneRol(authentication, "ROLE_VENDEDOR");
+        boolean isAdmin = tieneRol(authentication, "ROLE_ADMINISTRADOR_SISTEMA");
+        boolean isVendedor = tieneRol(authentication, "ROLE_EMPLEADO_VENTAS");
 
         if (isAdmin) {
             return usuarioService.listarTodos();
@@ -47,37 +49,33 @@ public class UsuarioController {
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> obtenerPorId(@PathVariable Long id, Authentication authentication) {
+    public ResponseEntity<Usuario> obtenerPorId(@PathVariable Long id, Authentication auth) {
         Usuario usuario = usuarioService.obtenerPorId(id);
-        if (usuario == null) {
-            return ResponseEntity.notFound().build();
-        }
+        if (usuario == null) return ResponseEntity.notFound().build();
 
-        boolean isAdmin = tieneRol(authentication, "ROLE_ADMIN");
-        boolean isVendedor = tieneRol(authentication, "ROLE_VENDEDOR");
-
-        if (isAdmin) {
+        if (tieneRol(auth, "ROLE_ADMINISTRADOR_SISTEMA")) {
             return ResponseEntity.ok(usuario);
         }
 
-        if (isVendedor) {
-            boolean usuarioEsCliente = usuario.getPermisos().stream()
+        if (tieneRol(auth, "ROLE_EMPLEADO_VENTAS")) {
+            boolean esCliente = usuario.getPermisos().stream()
                 .anyMatch(p -> p.getNombre().equals("ROLE_CLIENTE"));
-
-            if (usuarioEsCliente) {
-                return ResponseEntity.ok(usuario);
-            } else {
-                return ResponseEntity.status(403).build(); // Forbidden
-            }
+            return esCliente ? ResponseEntity.ok(usuario) : ResponseEntity.status(403).build();
         }
 
-        return ResponseEntity.status(403).build(); // otros roles
+        // Si el cliente está viendo su propio perfil
+        if (tieneRol(auth, "ROLE_CLIENTE") && auth.getName().equals(usuario.getUsername())) {
+            return ResponseEntity.ok(usuario);
+        }
+
+        return ResponseEntity.status(403).build();
     }
 
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('EMPLEADO_VENTAS', 'ADMINISTRADOR_SISTEMA')")
     public Usuario crear(@RequestBody Usuario usuario, Authentication authentication) {
-        boolean isVendedor = tieneRol(authentication, "ROLE_VENDEDOR");
+        boolean isVendedor = tieneRol(authentication, "ROLE_EMPLEADO_VENTAS");
 
         if (isVendedor) {
             // Forzar rol CLIENTE
@@ -91,7 +89,7 @@ public class UsuarioController {
     }
     
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMINISTRADOR_SISTEMA')")
     public ResponseEntity<Usuario> actualizar(@PathVariable Long id, @RequestBody Usuario nuevoUsuario){
         Usuario existente = usuarioService.obtenerPorId(id);
         if (existente != null){
@@ -105,7 +103,7 @@ public class UsuarioController {
     }
     
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMINISTRADOR_SISTEMA')")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         if (usuarioService.obtenerPorId(id) != null){
             usuarioService.eliminar(id);
@@ -116,7 +114,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}/permisos")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMINISTRADOR_SISTEMA')")
     public ResponseEntity<?> asignarPermisos(@PathVariable Long id,@RequestBody Set<String> nombresPermisos) {
 
         Usuario usuario = usuarioService.obtenerPorId(id);
@@ -135,7 +133,7 @@ public class UsuarioController {
         return ResponseEntity.ok("Permisos actualizados");
     }
     @PutMapping("/{id}/permisos/remover")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMINISTRADOR_SISTEMA')")
     public ResponseEntity<?> removerPermisos(@PathVariable Long id, @RequestBody Set<String> nombresPermisos) {
         Usuario usuario = usuarioService.obtenerPorId(id);
         if (usuario == null) {
@@ -153,7 +151,10 @@ public class UsuarioController {
 
         return ResponseEntity.ok("Permisos eliminados");
     }
-
-
+    
+    @GetMapping("/existe/{username}")
+    public boolean existeUsuario(@PathVariable String username) {
+        return usuarioService.existeUsuario(username);
+    }
 
 }

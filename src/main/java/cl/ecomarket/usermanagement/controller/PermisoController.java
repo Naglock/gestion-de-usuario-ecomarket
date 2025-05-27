@@ -9,7 +9,7 @@ import cl.ecomarket.usermanagement.model.Permiso;
 import cl.ecomarket.usermanagement.service.PermisoService;
 
 @RestController
-@RequestMapping("/api/permisos")
+@RequestMapping("/api/v1/permisos")
 public class PermisoController {
     
     @Autowired
