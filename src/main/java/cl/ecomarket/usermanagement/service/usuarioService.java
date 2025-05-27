@@ -3,6 +3,7 @@ package cl.ecomarket.usermanagement.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -57,8 +58,14 @@ public class UsuarioService {
                 .anyMatch(p -> p.getNombre().equals(nombreRol)))
             .toList();
     }
+
     public boolean existeUsuario(String username) {
         return usuarioRepository.existsByUsername(username);
     }
 
+    public ResponseEntity<Long> obtenerIdUsuario(String username) {
+        return usuarioRepository.findByUsername(username)
+                .map(usuario -> ResponseEntity.ok(usuario.getId()))
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

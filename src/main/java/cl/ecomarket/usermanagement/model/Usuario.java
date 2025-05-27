@@ -2,6 +2,7 @@ package cl.ecomarket.usermanagement.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
@@ -10,6 +11,7 @@ import java.util.Set;
 
 @Entity
 @Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Usuario {
@@ -19,7 +21,7 @@ public class Usuario {
     private String username;
     private String password;
     private String email;
-
+    
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "usuarios_permisos",

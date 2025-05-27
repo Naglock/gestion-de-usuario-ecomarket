@@ -157,4 +157,9 @@ public class UsuarioController {
         return usuarioService.existeUsuario(username);
     }
 
+    @GetMapping("/id-por-username/{username}")
+    public ResponseEntity<Long> obtenerIdPorUsername(@PathVariable String username) {
+        return usuarioService.obtenerIdUsuario(username);
+    }
+
 }
