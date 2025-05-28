@@ -14,7 +14,6 @@ import org.springframework.http.*;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,6 +28,12 @@ public class AuthController {
 
     @Autowired
     private UserDetailsService userDetailsService;
+    
+    @Autowired
+    private UsuarioService usuarioService;
+
+    @Autowired
+    private PermisoService permisoService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
@@ -42,15 +47,6 @@ public class AuthController {
         return ResponseEntity.ok(new AuthResponse(token));
     }
 
-    @Autowired
-    private UsuarioService usuarioService;
-
-    @Autowired
-    private PermisoService permisoService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @PostMapping("/register")
     public ResponseEntity<?> registrarCliente(@RequestBody ClienteRegisterDTO dto) {
         if (usuarioService.obtenerPorNombreUsuario(dto.getUsername()) != null) {
@@ -62,7 +58,7 @@ public class AuthController {
 
         Usuario usuario = new Usuario();
         usuario.setUsername(dto.getUsername());
-        usuario.setPassword(passwordEncoder.encode(dto.getPassword()));
+        usuario.setPassword(dto.getPassword());
         usuario.setEmail(dto.getEmail());
         usuario.setPermisos(Set.of(permisoCliente));
 
